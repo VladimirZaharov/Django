@@ -3,7 +3,7 @@ from django.contrib import admin
 from baskets.models import Basket
 # Register your models here.
 
-class BasketAdmin(admin.TabularInLine):
+class BasketAdmin(admin.TabularInline):
     model = Basket
     fields = ('product', 'quantity', 'created_timestamp')
     extra = 0
