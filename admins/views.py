@@ -10,11 +10,20 @@ from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm
 
 
 # Create your views here.
-def index(request):
-    context = {
-        'title': 'GeekShop - Админ Панель'
-    }
-    return render(request, 'admins/index.html', context)
+class IndexListView(ListView):
+    model = User
+    template_name = 'admins/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexListView, self).get_context_data(**kwargs)
+        context['title'] = 'Админ-панель'
+        return context
+
+# def index(request):
+#     context = {
+#         'title': 'GeekShop - Админ Панель'
+#     }
+#     return render(request, 'admins/index.html', context)
 
 
 class UserListView(ListView):
@@ -24,6 +33,11 @@ class UserListView(ListView):
     @method_decorator(user_passes_test(lambda u: u.is_staff))
     def dispatch(self, request, *args, **kwargs):
         return super(UserListView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        context['title'] = 'Админ-панель - Пользователи'
+        return context
 
 # @user_passes_test(lambda u: u.is_staff)
 # def admin_users(request):
@@ -39,6 +53,12 @@ class UserCreateView(CreateView):
     template_name = 'admins/admin-users-create.html'
     form_class = UserAdminRegistrationForm
     success_url = reverse_lazy('admins:admin_users')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Админ-панель - Создание пользователя'
+        return context
+
 
 
 # @user_passes_test(lambda u: u.is_staff)
@@ -64,7 +84,7 @@ class UserUpdateView(UpdateView):
     success_url = reverse_lazy('admins:admin_users')
 
     def get_context_data(self, **kwargs):
-        context = super(UserDeleteView, self).get_context_data(**kwargs)
+        context = super(UserUpdateView, self).get_context_data(**kwargs)
         context['title'] = 'Админ-панель - Редактирование пользователя'
         return context
 
