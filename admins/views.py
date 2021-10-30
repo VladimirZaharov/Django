@@ -59,6 +59,12 @@ class UserUpdateView(UpdateView):
     form_class = UserAdminProfileForm
     success_url = reverse_lazy('admins:admin_users')
 
+    def get_context_data(self, **kwargs):
+        context = super(UserDeleteView, self).get_context_data(**kwargs)
+        context['title'] = 'Админ-панель - Редактирование пользователя'
+        return context
+
+
 # @user_passes_test(lambda u: u.is_staff)
 # def admin_users_update(request, id):
 #     selected_user = User.objects.get(id=id)
