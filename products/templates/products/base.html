@@ -41,6 +41,10 @@
                                 <i class="fas fa-user-circle"></i>
                             </a>
                             </li>
+                            <li class="nav-item">
+                                <p class="nav-link">{{ baskets.0.total_sum }} - {{ baskets.0.total_quantity }}</p>
+                            </li>
+
                             {% if user.is_staff or user.is_superuser %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'admins:index' %}">
