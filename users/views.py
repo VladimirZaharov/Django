@@ -8,10 +8,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.contrib.auth.views import LoginView, LogoutView
+from django.db import transaction
 
-from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+
+from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm, UserProfileEditForm
 from baskets.models import Basket
-from users.models import User
+from users.models import User, UserProfile
 # Create your views here.
 
 
@@ -74,35 +76,40 @@ def registration(request):
     return render(request, 'users/registration.html', context)
 
 
-class ProfileUpdateView(UpdateView):
-    model = User
-    template_name = 'users/profile.html'
-    form_class = UserProfileForm
-    success_url = reverse_lazy('users:profile')
-
-    def get_context_data(self, **kwargs):
-        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
-        context['title'] = 'GeekShop - Профиль'
-        # context['baskets'] = Basket.objects.filter(user=)  # так и не понял что сюда передать
-        return context
-
-# @login_required
-# def profile(request):
-#     user = request.user
-#     if request.method == 'POST':
-#         form = UserProfileForm(instance=user, files=request.FILES, data=request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponseRedirect(reverse('users:profile'))
-#     else:
-#         form = UserProfileForm(instance=user)
-#     context = {
-#         'title': 'GeekShop - Профиль',
-#         'form': form,
-#         'baskets': Basket.objects.filter(user=user)
-#     }
-#     return render(request, 'users/profile.html', context)
+# class ProfileUpdateView(UpdateView):
+#     model = User
+#     template_name = 'users/profile.html'
+#     form_class = UserProfileForm
+#     success_url = reverse_lazy('users:profile')
 #
+#     def get_context_data(self, **kwargs):
+#         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+#         context['title'] = 'GeekShop - Профиль'
+#         # context['baskets'] = Basket.objects.filter(user=)  # так и не понял что сюда передать
+#         return context
+
+
+@transaction.atomic
+@login_required
+def profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileForm(instance=user, files=request.FILES, data=request.POST)
+        edit_form = UserProfileEditForm(instance=user.userprofile, files=request.FILES, data=request.POST)
+        if form.is_valid() and edit_form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('users:profile'))
+    else:
+        form = UserProfileForm(instance=user)
+        edit_form = UserProfileEditForm(instance=user.userprofile)
+    context = {
+        'title': 'GeekShop - Профиль',
+        'form': form,
+        'edit_form': edit_form,
+        'baskets': Basket.objects.filter(user=user)
+    }
+    return render(request, 'users/profile.html', context)
+
 
 
 class LogoutLogoutView(LogoutView):
