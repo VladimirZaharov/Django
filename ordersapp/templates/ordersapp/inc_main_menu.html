@@ -32,13 +32,22 @@
                                 </tfoot>
                                 <tbody>
                                 {% for order in object_list %}
+                                    {% if order.is_active %}
                                     <tr>
                                     <td><a href="{% url 'admins:admin_users_update' user.id %}" style="color: dodgerblue">{{ order.user }}</a></td>
                                     <td>{{ order.created }}</td>
                                     <td>{{ order.updated }}</td>
-                                    <td>{{ user.status }}</td>
-                                    <td><a href="{% url 'ordersapp:order_delete' order.id %}" style="color: dodgerblue">Удалить</a></td>
-
+                                    <td>{{ order.status }}</td>
+                                    <td>
+                                        <a href="{% url 'ordersapp:order_read' order.pk %}">посмотреть</a>
+                                    </td>
+                                    <td>
+                                        {% if order.status == 'FM' %}
+                                            <a href="{% url 'ordersapp:order_update' order.pk %}">редактировать</a>
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{% url 'ordersapp:order_delete' order.pk %}" style="color: dodgerblue">Удалить</a></td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                                 </tbody>

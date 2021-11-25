@@ -100,6 +100,7 @@ class OrderItemUpdate(UpdateView):
 
 class OrderDelete(DeleteView):
     model = Order
+    template_name = 'ordersapp/order_confirm_delete.html'
     success_url = reverse_lazy('ordersapp:main')
 
 
