@@ -25,9 +25,11 @@ from products.views import index, products
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
+    path('', include('social_django.urls',namespace='social')),
     path('products/', include('products.urls', namespace='products')),
     path('users/', include('users.urls', namespace='users')),
     path('baskets/', include('baskets.urls', namespace='baskets')),
+    path('orders/', include('ordersapp.urls', namespace='orders')),
     path('admins/', include('admins.urls', namespace='admins'))
 ]
 

@@ -1,7 +1,7 @@
 from django.urls import path
 from admins.views import IndexListView, UserListView, UserUpdateView, UserCreateView, UserDeleteView
 
-app_name = 'baskets'
+app_name = 'admins'
 
 urlpatterns = [
     path('', IndexListView.as_view(), name='index'),
