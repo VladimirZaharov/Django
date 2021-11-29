@@ -1,7 +1,8 @@
 {% extends 'admins/base.html' %}
 
 {% block content %}
-<form action="" method="post">
+        {% include 'ordersapp/includes/inc_order_summary.html' %}
+        <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <table class="table">
