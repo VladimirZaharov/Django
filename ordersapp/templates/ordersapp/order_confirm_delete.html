@@ -1,0 +1,23 @@
+{% extends 'admins/base.html' %}
+{% load static %}
+
+{% block content %}
+    <main>
+            <div class="container-fluid">
+                <h1 class="mt-4">Уверены, что хотите удалить?</h1>
+                {% include "ordersapp/includes/inc_order_summary.html" %}
+                <h1 class="mt-4">{{ order }}</h1>
+
+                <div class="card-footer">
+                    <form action="{% url 'ordersapp:order_delete' order.pk %}" method="post">
+                    {% csrf_token %}
+                    <input class="btn btn-danger" type="submit" value="удалить">
+                    </form>
+                    <a href="{% url 'ordersapp:main' %}">
+                        <button class="btn btn-success">Отмена</button>
+                    </a>
+                </div>
+
+            </div>
+    </main>
+{% endblock %}
