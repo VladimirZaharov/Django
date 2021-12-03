@@ -51,6 +51,11 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
     'template_profiler_panel',
+    'django_extensions',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 AUTHENTICATION_BACKENDS = (
