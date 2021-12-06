@@ -17,14 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-
+from django.views.decorators.cache import cache_page
 
 from products.views import index, products
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
+    path('', cache_page(3600)(index), name='index'),
     path('', include('social_django.urls',namespace='social')),
     path('products/', include('products.urls', namespace='products')),
     path('users/', include('users.urls', namespace='users')),
@@ -34,4 +34,8 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    import debug_toolbar
+
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
