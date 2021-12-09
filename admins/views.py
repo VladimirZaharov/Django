@@ -1,3 +1,6 @@
+from django.db import connection
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
@@ -5,6 +8,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 
+from products.models import Product, ProductCategory
 from users.models import User
 from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm
 
@@ -124,3 +128,36 @@ class UserDeleteView(DeleteView):
 #     user = User.objects.get(id=id)
 #     user.safe_delete()
 #     return HttpResponseRedirect(reverse('admins:admin_users'))
+
+class ProductListView(ListView):
+    model = Product
+    template_name = 'admins/admin-product-read.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductListView, self).get_context_data(**kwargs)
+        context['title'] = 'Админ-панель - Товары'
+        return context
+
+
+class CategoryListView(ListView):
+    model = ProductCategory
+    template_name = 'admins/admin-category-read.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        context['title'] = 'Админ-панель - Категории'
+        return context
+
+
+def db_profile_by_type(prefix, type, queries):
+    update_queries = list(filter(lambda x: type in x['sql'], queries))
+    print(f'db_profile {type} for {prefix}: ')
+    [print(query['sql']) for query in update_queries]
+
+
+@receiver(pre_save, sender=ProductCategory)
+def product_is_active_update_productcategory_save(sender, instance, **kwargs):
+    if instance.pk:
+        instance.product_set.update(is_active=instance.is_active)  # упростили код
+
+        db_profile_by_type(sender, 'UPDATE',  connection.queries)
