@@ -15,7 +15,7 @@ def index(request):
     context = {'title': 'geekshop'}
     return render(request, 'products/index.html', context)
 
-@cache_page(3600)
+
 def products(request, category_id=None, page=1):
     context = {'title': 'GeekShop - Каталог', 'categories': ProductCategory.objects.all()}
     if category_id:
@@ -33,7 +33,6 @@ def products(request, category_id=None, page=1):
     return render(request, 'products/products.html', context)
 
 def products_ajax(request, category_id=None, page=1):
-
     if request.is_ajax():
         context = {'title': 'GeekShop - Каталог', 'categories': ProductCategory.objects.all()}
         if category_id:
@@ -48,5 +47,5 @@ def products_ajax(request, category_id=None, page=1):
         except EmptyPage:
             products_paginator = paginator.page(paginator.num_pages)
         context['products'] = products_paginator
-        result = render_to_string('products/inc_products.html', context=context, request=request)
+        result = render_to_string('products/inc_header.html', context=context, request=request)
     return JsonResponse({'result': result})
